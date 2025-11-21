@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ ArkLegendsPVE Sent Points Logs ⚡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght=600;800&display=swap');
+
+        /* NEW Sleek Modern Blue Palette (with Log Colors) */
+        :root {
+            --modern-darkest: #121212; /* Solid Black/Dark Gray */
+            --modern-dark-bg: #1e1e1e; /* Card Background */
+            --modern-accent-blue: #00AEEF; /* Vibrant Electric Blue (For Inputs/Headers) */
+            --modern-light-blue: #66CCFF; /* Lighter Accent */
+            --modern-text-light: #E0E0E0; /* Off-White Text */
+            --modern-shadow-glow: rgba(0, 174, 239, 0.4); /* Blue Glow Shadow */
+            --modern-input-bg: #2b2b2b; /* Slightly lighter input background */
+            --modern-border: #3A3A3A; /* Subtle border color */
+            --modern-secondary-text: #B0B0B0; /* Gray for reference text */
+
+            /* Log Entry Colors (UPDATED) */
+            --log-added-green: #2ECC71; /* Green for Added */
+            --log-deducted-red: #E74C3C; /* Red for Deducted */
+            --log-adjusted-blue: #3498DB; /* Blue for Balance Adjusted */
+            --log-other-pink: #FF69B4; /* Bright Pink for Other Action */
+
+            /* Renaming variables to match new colors for clarity */
+            --log-added-color: var(--log-added-green);
+            --log-deducted-color: var(--log-deducted-red);
+            --log-adjusted-color: var(--log-adjusted-blue);
+            --log-other-color: var(--log-other-pink);
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding: 30px;
+            background: var(--modern-darkest);
+            min-height: 100vh;
+            margin: 0;
+            color: var(--modern-text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--modern-text-light);
+            text-shadow: 0 0 15px var(--modern-shadow-glow); 
+            font-size: 3.5em;
+            letter-spacing: 5px;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            animation: none;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: var(--modern-accent-blue);
+            margin: 10px auto 0;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--modern-shadow-glow);
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1400px; 
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .input-form, .list-container {
+            min-width: 350px;
+            padding: 40px;
+            border-radius: 8px;
+            background-color: var(--modern-dark-bg);
+            border: 1px solid var(--modern-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 174, 239, 0.1);
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .input-form {
+            flex: 1; 
+        }
+        
+        .list-container {
+            flex: 2; 
+            min-width: 700px; 
+        }
+
+        .input-form::before, .list-container::before,
+        .input-form::after, .list-container::after {
+            content: none;
+        }
+        
+        .input-form:hover, .list-container:hover {
+            transform: translateY(-2px) scale(1.005);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 25px var(--modern-shadow-glow);
+        }
+
+        .input-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .input-form input,
+        .input-form select {
+            align-self: stretch;
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--modern-accent-blue);
+            border-bottom: 3px solid var(--modern-border);
+            padding-bottom: 12px;
+            margin-top: 0;
+            font-size: 1.8em;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 174, 239, 0.5);
+            text-transform: uppercase;
+            align-self: stretch;
+            position: relative;
+        }
+
+        /* --- Input and Select Styling: Consolidated Styles (Unchanged) --- */
+        input[type="text"],
+        #miscReasonInput,
+        #otherActionInput,
+        #nameId, 
+        #amountInput,
+        #whatFor, 
+        #actionSelect {
+            font-family: 'Roboto', sans-serif;
+            padding: 15px; 
+            margin: 12px 0;
+            border-radius: 4px;
+            font-size: 1.1em; 
+            background-color: var(--modern-input-bg);
+            color: var(--modern-text-light);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--modern-border);
+        }
+        
+        #nameId, #amountInput, #whatFor, #actionSelect {
+            border: 1px solid var(--modern-accent-blue);
+            box-shadow: 0 0 5px rgba(0, 174, 239, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        #whatFor, #actionSelect {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23E0E0E0%22%20d%3D%22M287%20197.35L146.2%2056.65L5.4%20197.35z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus, #whatFor:focus, #actionSelect:focus, #miscReasonInput:focus, #otherActionInput:focus, #amountInput:focus, #nameId:focus {
+            border-color: var(--modern-light-blue); 
+            box-shadow: 0 0 10px var(--modern-shadow-glow), inset 0 0 5px rgba(0, 174, 239, 0.3);
+            background-color: #353535;
+        }
+
+        /* --- Button Styles (Unchanged) --- */
+        button {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--modern-accent-blue);
+            color: var(--modern-darkest);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1.1em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease-in-out;
+            text-transform: uppercase;
+            min-width: 200px;
+            max-width: 90%;
+        }
+
+        button:hover {
+            background: var(--modern-light-blue);
+            color: var(--modern-darkest);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px var(--modern-shadow-glow);
+        }
+
+        #addToListBtn {
+            padding: 15px 35px;
+            font-size: 1.3em;
+            margin-top: 30px;
+            border: 2px solid var(--modern-text-light);
+        }
+
+        #downloadLogBtn {
+            padding: 10px 20px;
+            font-size: 1.0em;
+            margin-top: 30px;
+            background: var(--modern-dark-bg);
+            color: var(--modern-text-light);
+            border: 1px solid var(--modern-accent-blue);
+            box-shadow: 0 0 5px rgba(0, 174, 239, 0.3);
+        }
+
+
+        /* --- LOG ENTRY STYLING: ONE-LINE LAYOUT --- */
+        #entryList li {
+            background: var(--modern-input-bg);
+            margin: 5px 0; 
+            padding: 10px; 
+            border-radius: 4px;
+            border: 2px solid; 
+            font-size: 0.9em; 
+            transition: all 0.2s;
+            
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap; 
+        }
+        
+        #entryList li strong {
+            color: var(--modern-accent-blue);
+            font-weight: 700;
+        }
+        
+        .log-content {
+            display: flex;
+            align-items: center;
+            flex-grow: 1; 
+            white-space: nowrap; 
+            overflow: hidden; 
+        }
+        
+        .log-segment {
+            padding: 0 8px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            flex-shrink: 0; 
+        }
+
+        .log-segment:not(:last-child)::after {
+            content: '|';
+            color: var(--modern-border);
+            margin-left: 8px;
+        }
+        
+        .log-segment-name {
+            flex-basis: 20%; 
+            min-width: 150px;
+        }
+        .log-segment-amount {
+            flex-basis: 15%;
+            min-width: 120px; 
+            font-weight: 900; 
+            color: var(--modern-light-blue);
+            text-shadow: 0 0 5px rgba(102, 204, 255, 0.4);
+        }
+        .log-segment-reason {
+            flex-basis: 40%; 
+            flex-grow: 1.5; 
+            min-width: 250px; 
+        }
+
+
+        /* --- ACTION-SPECIFIC LOG BORDERS (UPDATED COLORS) --- */
+        /* Added = Green */
+        #entryList li.added { border-color: var(--log-added-color); }
+        #entryList li.added:hover { border-color: var(--log-added-color); box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); transform: none; }
+        
+        /* Deducted = Red */
+        #entryList li.deducted { border-color: var(--log-deducted-color); }
+        #entryList li.deducted:hover { border-color: var(--log-deducted-color); box-shadow: 0 0 12px rgba(231, 76, 60, 0.4); transform: none; }
+        
+        /* Balance Adjusted = Blue */
+        #entryList li.adjusted { border-color: var(--log-adjusted-color); }
+        #entryList li.adjusted:hover { border-color: var(--log-adjusted-color); box-shadow: 0 0 12px rgba(52, 152, 219, 0.4); transform: none; }
+        
+        /* Other Action = Bright Pink */
+        #entryList li.other { border-color: var(--log-other-color); } 
+        #entryList li.other:hover { border-color: var(--log-other-color); box-shadow: 0 0 12px rgba(255, 105, 180, 0.6); transform: none; } 
+
+        /* --- Color Swatch Styling (UPDATED COLORS) --- */
+        .color-swatch {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+        }
+        .swatch-added { background-color: var(--log-added-color); }
+        .swatch-deducted { background-color: var(--log-deducted-color); }
+        .swatch-adjusted { background-color: var(--log-adjusted-color); }
+        .swatch-other { background-color: var(--log-other-color); }
+
+
+        .log-timestamp {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.8em;
+            color: #AAAAAA;
+            border-top: none; 
+            display: block;
+            padding-left: 15px;
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        /* Search Bar Style (Unchanged) */
+        #searchBar {
+            align-self: stretch;
+            margin-bottom: 20px;
+            border: 1px solid var(--modern-border);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        /* --- POINTS REFERENCE LAYOUT (Unchanged) --- */
+        .points-reference {
+            align-self: stretch;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #242424; 
+            border-radius: 4px;
+            border: 1px dashed var(--modern-border);
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap; 
+            gap: 20px; 
+        }
+
+        .reference-section {
+            padding-top: 10px;
+            min-width: 250px; 
+            flex-grow: 1;
+            flex-basis: 0; 
+        }
+
+        .points-reference h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--modern-light-blue);
+            font-size: 1.1em;
+            margin: 0 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--modern-border);
+            text-transform: uppercase;
+        }
+
+        .points-reference ul {
+            list-style: none; 
+            margin: 0;
+            padding: 0;
+            color: var(--modern-secondary-text);
+        }
+        
+        .points-reference .points-list {
+            list-style: disc; 
+            margin: 0 0 0 20px;
+        }
+
+        .points-reference li strong {
+            color: var(--modern-accent-blue);
+            font-weight: 700;
+        }
+        
+        .color-key { order: 2; }
+        .standard-awards { order: 1; }
+
+
+        /* --- Responsive Adjustments (Unchanged) --- */
+        @media (max-width: 1100px) {
+            .input-form, .list-container {
+                flex: 1 1 100%; 
+                min-width: 100%;
+            }
+            .list-container {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .input-form, .list-container {
+                padding: 30px;
+            }
+            #entryList li {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                height: auto;
+            }
+            .log-content {
+                display: block; 
+                flex-wrap: wrap;
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .log-segment {
+                display: block;
+                width: 100%;
+                padding: 2px 0;
+                overflow: visible;
+                white-space: normal;
+                text-overflow: clip; 
+            }
+            .log-segment:not(:last-child)::after {
+                content: none; 
+            }
+            .log-segment-name, .log-segment-amount, .log-segment-reason {
+                min-width: 100%;
+                flex-basis: auto;
+            }
+            .log-timestamp {
+                width: 100%;
+                text-align: left;
+                padding-left: 0;
+                border-top: 1px solid var(--modern-border);
+                margin-top: 5px;
+            }
+
+            h1 {
+                font-size: 2.5em;
+                white-space: normal; 
+            }
+        }
+
+        @media (max-width: 768px) {
+            .points-reference {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .reference-section {
+                min-width: 100%;
+                flex-basis: auto;
+                order: initial; 
+            }
+            .standard-awards {
+                padding-bottom: 10px;
+                border-bottom: 1px dashed var(--modern-border);
+            }
+        }
+
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>
+            ArkLegendsPVE Sent Points Logs
+        </h1>
+    </header>
+
+    <div class="container">
+        <div class="input-form">
+            <h2>➕ New Transfer</h2>
+            <input type="text" id="nameId" placeholder="Player Name/EOS ID">
+            
+            <select id="actionSelect">
+                <option value="" disabled selected>--- Select Action Type ---</option>
+                <option value="Added">Added</option>
+                <option value="Deducted">Deducted</option>
+                <option value="Balance Adjusted">Balance Adjusted</option>
+                <option value="Other Action">Other Action</option>
+            </select>
+            
+            <input type="text" id="otherActionInput" placeholder="Specify Other Action" style="display:none;">
+
+            <input type="text" id="amountInput" placeholder="Amount (e.g., 5000)">
+
+            <select id="whatFor">
+                <option value="" disabled selected>--- Select Reason for Points ---</option>
+                <option value="Discord Boost (1k points)">Discord boost (1k points)</option>
+                <option value="Server Donation (1k points)">Server donation (1k points)</option>
+                <option value="Mod Developer Donation (1k points)">Mod developer donation (1k points)</option>
+                <option value="Mee6 Lvl 10 (2k points)">Mee6 Lvl 10 (2k points)</option>
+                <option value="Mee6 Lvl 15 (3k points)">Mee6 Lvl 15 (3k points)</option>
+                <option value="Mee6 Lvl 20 (4k points)">Mee6 Lvl 20 (4k points)</option>
+                <option value="1st in Accessories Leaderboard (5k points)">1st in Accessories Leaderboard (5k points)</option>
+                <option value="2nd in Accessories Leaderboard (3k points)">2nd in Accessories Leaderboard (3k points)</option>
+                <option value="3rd in Accessories Leaderboard (1k points)">3rd in Accessories Leaderboard (1k points)</option>
+                <option value="Completing the Feedback Survey (2.5k)">Completing the feedback survey (2.5k)</option>
+                <option value="Bought in another player (1k)">Bought in another player (1k)</option>
+                <option value="Shop Refund">Shop refund</option>
+                <option value="Misc">Misc</option>
+            </select>
+            
+            <input type="text" id="miscReasonInput" placeholder="Specify Misc Reason" style="display:none;">
+
+            <button id="addToListBtn">Save to Log</button>
+            <button id="downloadLogBtn">Download Log (.txt)</button>
+            
+            <div class="points-reference">
+                <div class="reference-section standard-awards">
+                    <h3>⭐ Standard Point Awards Reference</h3>
+                    <ul class="points-list">
+                        <li>Discord boost: <strong>1,000 pts</strong></li>
+                        <li>Server/Mod Developer Donation: <strong>1,000 pts</strong></li>
+                        <li>Mee6 Lvl 10: <strong>2,000 pts</strong></li>
+                        <li>Mee6 Lvl 15: <strong>3,000 pts</strong></li>
+                        <li>Mee6 Lvl 20: <strong>4,000 pts</strong></li>
+                        <li>Accessories 1st Place: <strong>5,000 pts</strong></li>
+                        <li>Accessories 2nd Place: <strong>3,000 pts</strong></li>
+                        <li>Accessories 3rd Place: <strong>1,000 pts</strong></li>
+                        <li>Feedback Survey: <strong>2,500 pts</strong></li>
+                        <li>Bought in another player: <strong>1,000 pts</strong></li>
+                        <li>Shop Refund: *Variable*</li>
+                    </ul>
+                </div>
+                
+                <div class="reference-section color-key">
+                    <h3>🎨 Log Color Key</h3>
+                    <ul>
+                        <li><span class="color-swatch swatch-added"></span> <strong>Green:</strong> Points **Added** (Credit)</li>
+                        <li><span class="color-swatch swatch-deducted"></span> <strong>Red:</strong> Points **Deducted** (Debit)</li>
+                        <li><span class="color-swatch swatch-adjusted"></span> <strong>Blue:</strong> **Balance Adjusted** (Correction)</li>
+                        <li><span class="color-swatch swatch-other"></span> <strong>Pink:</strong> **Other Action** (Non-Point Related)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-container">
+            <h2>📜 Transfer History</h2>
+            
+            <input type="text" id="searchBar" placeholder="🔍 Search Player, Action, or Reason...">
+            <ul id="entryList">
+                </ul>
+        </div>
+    </div>
+
+    <script>
+        // *** ⚠️ IMPORTANT: Please ensure this BIN_ID and SECRET_KEY are correct for your JSONBin.io data bin. ⚠️ ***
+const BIN_ID = "6920490dae596e708f6750b3";
+const SECRET_KEY = "$2a$10$ruPaK5XotLTPbsuw0aBxOOBf9TH1kwIrhnYdZsmSSA7WuJk8Ecs/.";
+// API URL now correctly points to the JSONBin endpoint using the BIN_ID
+const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+// *******************************************************************
+       
+        const nameIdInput = document.getElementById('nameId');
+        const actionSelect = document.getElementById('actionSelect');
+        const otherActionInput = document.getElementById('otherActionInput');
+        const amountInput = document.getElementById('amountInput');
+        const whatForInput = document.getElementById('whatFor');
+        const miscReasonInput = document.getElementById('miscReasonInput');
+        const addToListBtn = document.getElementById('addToListBtn');
+        const entryList = document.getElementById('entryList');
+        const searchBar = document.getElementById('searchBar');
+        const downloadLogBtn = document.getElementById('downloadLogBtn');
+
+        let logEntries = [];
+
+        // --- JSONBIN Functions (Unchanged) ---
+        async function loadEntries() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: { 'X-Master-Key': SECRET_KEY, 'X-Bin-Meta': false }
+                });
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                const data = await response.json();
+                logEntries = Array.isArray(data) ? data : [];
+                renderEntries();
+                console.log("Log loaded from server successfully.");
+            } catch (error) {
+                console.error("Could not load log from server. Starting with an empty log.", error);
+                logEntries = [];
+                renderEntries();
+            }
+        }
+
+        async function saveEntries() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': SECRET_KEY },
+                    body: JSON.stringify(logEntries)
+                });
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                console.log("Log saved to server successfully.");
+            } catch (error) {
+                console.error("Could not save log to server.", error);
+                alert("🚨 Warning: Log could not be saved to the central server!");
+            }
+        }
+        
+        // --- UTILITY FUNCTIONS ---
+        
+        // Function to determine the CSS class based on the action
+        function getActionClass(action) {
+            if (action.includes('Added')) return 'added';
+            if (action.includes('Deducted')) return 'deducted';
+            if (action.includes('Balance Adjusted')) return 'adjusted';
+            return 'other'; // Covers 'Other Action' and any unspecified action
+        }
+
+        function renderEntries() {
+            entryList.innerHTML = '';
+            logEntries.slice().reverse().forEach(entry => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = entry.html;
+                listItem.setAttribute('data-search-term', entry.search);
+                // Assign the specific class for styling the border
+                listItem.classList.add(entry.actionClass);
+                entryList.appendChild(listItem);
+            });
+        }
+
+        function getFormattedDateTime() {
+            const now = new Date();
+            const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+            const datePart = now.toLocaleDateString('en-GB', dateOptions);
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const timePart = now.toLocaleTimeString('en-US', timeOptions);
+            return `${datePart} at ${timePart}`;
+        }
+
+        // --- Event listeners for showing/hiding inputs (Unchanged) ---
+        whatForInput.addEventListener('change', function() {
+            if (whatForInput.value === 'Misc') {
+                miscReasonInput.style.display = 'block';
+                miscReasonInput.focus();
+            } else {
+                miscReasonInput.style.display = 'none';
+                miscReasonInput.value = '';
+            }
+        });
+
+        actionSelect.addEventListener('change', function() {
+            if (actionSelect.value === 'Other Action') {
+                otherActionInput.style.display = 'block';
+                otherActionInput.focus();
+            } else {
+                otherActionInput.style.display = 'none';
+                otherActionInput.value = '';
+            }
+        });
+
+        // --- CORE LOGIC: Add Entry ---
+        addToListBtn.addEventListener('click', async function() {
+            const nameId = nameIdInput.value.trim();
+            let whatDid = actionSelect.value;
+            const amount = amountInput.value.trim();
+            let whatFor = whatForInput.value;
+            const timestamp = getFormattedDateTime();
+
+            // 1. Validate Player Name and Action Selection
+            if (nameId === '' || whatDid === '' || whatDid === '--- Select Action Type ---') {
+                alert('Please fill in the Player name and select an Action Type!');
+                return;
+            }
+
+            // 2. Handle "Other Action" option
+            if (whatDid === 'Other Action') {
+                const otherAction = otherActionInput.value.trim();
+                if (otherAction === '') {
+                    alert('You selected "Other Action." Please specify the action in the box that appeared.');
+                    return;
+                }
+                whatDid = `Other Action: ${otherAction}`;
+            }
+
+            // 3. Validate Amount Input
+            if (amount === '') {
+                alert('Please enter an Amount for the transfer!');
+                return;
+            }
+            
+            // 4. Validate Reason Selection
+            if (whatFor === '' || whatFor === '--- Select Reason for Points ---') {
+                alert('Please select a valid Reason for the points transfer!');
+                return;
+            }
+
+            // 5. Handle "Misc Reason" option
+            if (whatFor === 'Misc') {
+                const miscReason = miscReasonInput.value.trim();
+                if (miscReason === '') {
+                    alert('You selected "Misc Reason." Please specify the reason in the box that appeared.');
+                    return;
+                }
+                whatFor = `Misc: ${miscReason}`;
+            }
+
+            // Determine the class for the entry
+            const actionClass = getActionClass(whatDid);
+
+            // HTML FORMAT FOR ONE-LINE DISPLAY 
+            const entryHtml = `
+                <div class="log-content">
+                    <span class="log-segment log-segment-name"><strong>Player:</strong> ${nameId}</span>
+                    <span class="log-segment"><strong>Action:</strong> ${whatDid}</span>
+                    <span class="log-segment log-segment-amount"><strong>Amount:</strong> ${amount}</span>
+                    <span class="log-segment log-segment-reason"><strong>Reason:</strong> ${whatFor}</span>
+                </div>
+                <span class="log-timestamp">${timestamp}</span>
+            `;
+            
+            // Plain text log format (Unchanged)
+            const newEntry = {
+                text: `[${timestamp}] PLAYER: ${nameId} | ACTION: ${whatDid} | AMOUNT: ${amount} | REASON: ${whatFor}`,
+                html: entryHtml,
+                search: `${nameId} ${whatDid} ${amount} ${whatFor}`.toLowerCase(),
+                timestamp: Date.now(),
+                actionClass: actionClass 
+            };
+
+            logEntries.push(newEntry);
+            
+            await saveEntries();
+            
+            renderEntries();
+
+            // Clear inputs and hide boxes (Unchanged)
+            nameIdInput.value = '';
+            actionSelect.selectedIndex = 0;
+            otherActionInput.value = '';
+            otherActionInput.style.display = 'none';
+            amountInput.value = '';
+            whatForInput.selectedIndex = 0;
+            miscReasonInput.value = '';
+            miscReasonInput.style.display = 'none';
+            nameIdInput.focus();
+        });
+
+
+        // --- FUNCTIONALITY: Download Log (Unchanged) ---
+        function downloadLog() {
+            if (logEntries.length === 0) {
+                alert("The log is empty. Nothing to download!");
+                return;
+            }
+            
+            const header = `=== ARKLEGENDSPVE SENT POINTS LOG - ${getFormattedDateTime()} ===\n\n`;
+
+            const logText = logEntries
+                .map(entry => entry.text)
+                .join('\n');
+            
+            const fullContent = header + logText;
+
+            const blob = new Blob([fullContent], { type: 'text/plain;charset=utf-8' });
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ArkLegendsPVE_Log_${new Date().toISOString().slice(0, 10)}.txt`;
+            
+            document.body.appendChild(a);
+            a.click();
+            
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        downloadLogBtn.addEventListener('click', downloadLog);
+
+
+        // --- SEARCH FUNCTIONALITY (Unchanged) ---
+        searchBar.addEventListener('keyup', function() {
+            const searchTerm = searchBar.value.toLowerCase().trim();
+            const listItems = entryList.getElementsByTagName('li');
+            
+            for (let i = 0; i < listItems.length; i++) {
+                const item = listItems[i];
+                const itemText = item.getAttribute('data-search-term');
+
+                if (itemText && itemText.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            }
+        });
+
+        // --- EXECUTION: Load data when the script first runs ---
+        window.onload = loadEntries;
+    </script>
+</body>
+</html>

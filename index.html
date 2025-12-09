@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ ArkLegendsPVE Sent Points Logs ⚡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght=600;800&display=swap');
+
+        /* NEW Sleek Modern Blue Palette (with Log Colors) */
+        :root {
+            --modern-darkest: #121212; --modern-dark-bg: #1e1e1e; --modern-accent-blue: #00AEEF; --modern-light-blue: #66CCFF; --modern-text-light: #E0E0E0; --modern-shadow-glow: rgba(0, 174, 239, 0.4); --modern-input-bg: #2b2b2b; --modern-border: #3A3A3A; --modern-secondary-text: #B0B0B0; --log-added-green: #2ECC71; --log-deducted-red: #E74C3C; --log-adjusted-blue: #3498DB; --log-other-pink: #FF69B4; --log-added-color: var(--log-added-green); --log-deducted-color: var(--log-deducted-red); --log-adjusted-color: var(--log-adjusted-blue); --log-other-color: var(--log-other-pink);
+        }
+        
+        body { font-family: 'Roboto', sans-serif; padding: 30px; background: var(--modern-darkest); min-height: 100vh; margin: 0; color: var(--modern-text-light); display: flex; flex-direction: column; align-items: center; overflow-x: hidden; line-height: 1.6; }
+        header { text-align: center; margin-bottom: 40px; width: 100%; }
+        h1 { font-family: 'Montserrat', sans-serif; color: var(--modern-text-light); text-shadow: 0 0 15px var(--modern-shadow-glow); font-size: 3.5em; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
+        h1::after { content: ''; display: block; width: 100%; max-width: 500px; height: 3px; background: var(--modern-accent-blue); margin: 10px auto 0; border-radius: 2px; box-shadow: 0 0 10px var(--modern-shadow-glow); }
+        .container { display: flex; flex-wrap: wrap; gap: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .input-form, .list-container { min-width: 350px; padding: 40px; border-radius: 8px; background-color: var(--modern-dark-bg); border: 1px solid var(--modern-border); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 174, 239, 0.1); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+        .input-form { flex: 1; }
+        .list-container { flex: 2; min-width: 700px; }
+        h2 { font-family: 'Montserrat', sans-serif; color: var(--modern-accent-blue); border-bottom: 3px solid var(--modern-border); padding-bottom: 12px; margin-top: 0; font-size: 1.8em; text-shadow: 0 0 5px rgba(0, 174, 239, 0.5); text-transform: uppercase; align-self: stretch; text-align: center; }
+        input[type="text"], #amountInput, #whatFor, #actionSelect, #searchBar { padding: 15px; margin: 12px 0; border-radius: 4px; font-size: 1.1em; background-color: var(--modern-input-bg); color: var(--modern-text-light); border: 1px solid var(--modern-accent-blue); box-shadow: 0 0 5px rgba(0, 174, 239, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.6); align-self: stretch; box-sizing: border-box; }
+        #whatFor, #actionSelect { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23E0E0E0%22%20d%3D%22M287%20197.35L146.2%2056.65L5.4%20197.35z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat, repeat; background-position: right .7em top 50%, 0 0; background-size: .65em auto, 100%; cursor: pointer; }
+        button { font-family: 'Montserrat', sans-serif; background: var(--modern-accent-blue); color: var(--modern-darkest); padding: 12px 25px; border: none; border-radius: 4px; cursor: pointer; font-size: 1.1em; font-weight: 700; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); transition: all 0.2s ease-in-out; text-transform: uppercase; width: 90%; max-width: 350px; }
+        .button-group { display: flex; flex-direction: column; width: 100%; margin-top: 30px; gap: 12px; align-items: center; }
+        #addToListBtn { padding: 15px 35px; font-size: 1.3em; border: 2px solid var(--modern-text-light); }
+        .danger-button { background: #E74C3C; border: 2px solid #C0392B; color: var(--modern-text-light); }
+        .info-button { background: #2C3E50; border: 2px solid #34495E; color: var(--modern-text-light); }
+        #entryList { list-style: none; padding: 0; margin: 0; }
+        #entryList li { background: var(--modern-input-bg); margin: 4px 0; padding: 10px; border-radius: 4px; border: 1px solid; font-size: 0.9em; display: flex; flex-direction: column; align-items: flex-start; }
+        .log-content { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
+        .log-segment { padding: 0 8px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+        .log-segment strong { color: var(--modern-secondary-text); margin-right: 3px; }
+        .log-segment-name { flex-basis: 220px; font-weight: 700; color: var(--modern-accent-blue); min-width: 180px; }
+        .log-segment-action { flex-basis: 180px; min-width: 150px; }
+        .log-segment-amount { flex-basis: 120px; font-weight: 900; text-shadow: 0 0 5px rgba(102, 204, 255, 0.4); min-width: 100px; }
+        .log-segment-reason { flex-grow: 1; min-width: 200px; white-space: normal; }
+        #entryList li.added { border-color: var(--log-added-color); }
+        #entryList li.deducted { border-color: var(--log-deducted-color); }
+        #entryList li.adjusted { border-color: var(--log-adjusted-color); }
+        #entryList li.other { border-color: var(--log-other-color); }
+        #entryList li.added .log-segment-amount { color: var(--log-added-color); }
+        #entryList li.deducted .log-segment-amount { color: var(--log-deducted-color); }
+        #entryList li.adjusted .log-segment-amount { color: var(--log-adjusted-color); }
+        #entryList li.other .log-segment-amount { color: var(--log-other-color); }
+        .log-timestamp { font-size: 0.7em; color: #AAAAAA; display: block; width: 100%; text-align: right; padding-top: 5px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--modern-dark-bg); padding: 30px; border-radius: 8px; border: 2px solid var(--modern-accent-blue); box-shadow: 0 0 30px rgba(0, 174, 239, 0.5); max-width: 400px; width: 90%; text-align: center; }
+        .modal-content h3 { font-family: 'Montserrat', sans-serif; color: var(--modern-accent-blue); margin-top: 0; }
+        .modal-buttons button { margin: 10px 5px; width: 100px; padding: 8px 15px; }
+        .modal-input { width: 90%; margin: 10px auto; padding: 10px; border-radius: 4px; border: 1px solid var(--modern-border); background-color: var(--modern-input-bg); color: var(--modern-text-light); box-sizing: border-box; }
+        @media (max-width: 1100px) { .input-form, .list-container { flex: 1 1 100%; min-width: 100%; } }
+        @media (max-width: 768px) { body { padding: 15px; } h1 { font-size: 2.5em; letter-spacing: 2px; white-space: normal; line-height: 1.2; } .input-form, .list-container { padding: 20px; } .log-content { flex-direction: column; align-items: flex-start; } .log-segment { padding: 3px 0; width: 100%; white-space: normal; overflow: visible; } .log-segment-amount { padding-bottom: 5px; border-bottom: 1px dashed var(--modern-border); margin-bottom: 5px; } .log-segment-name, .log-segment-amount, .log-segment-action, .log-segment-reason { flex-basis: auto; min-width: unset; width: 100%; } .log-timestamp { text-align: left; font-size: 0.75em; margin-top: 3px; padding: 0; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>
+            ArkLegendsPVE Sent Points Logs
+        </h1>
+    </header>
+
+    <div class="container">
+        <div class="input-form">
+            <h2>➕ Add Points Log</h2>
+            <input type="text" id="nameId" placeholder="Player Name/EOS ID">
+
+            <select id="actionSelect">
+                <option value="" disabled selected>--- Select Action Type ---</option>
+                <option value="Added">Added</option>
+                <option value="Deducted">Deducted</option>
+                <option value="Balance Adjusted">Balance Adjusted</option>
+                <option value="Other Action">Other Action</option>
+            </select>
+
+            <input type="text" id="otherActionInput" placeholder="Specify Other Action" style="display:none;">
+
+            <input type="text" id="amountInput" placeholder="Amount (e.g., 5000)">
+
+            <select id="whatFor">
+                <option value="" disabled selected>--- Select Reason for Points ---</option>
+                <!-- NEW REASON OPTION ADDED -->
+                <option value="This months Legend (5k points)">This months Legend (5k points)</option> 
+                
+                <option value="Discord Boost (1k points)">Discord boost (1k points)</option>
+                <option value="Server Donation (1k points)">Server donation (1k points)</option>
+                <option value="Mod Developer Donation (1k points)">Mod developer donation (1k points)</option>
+                <option value="Mee6 Lvl 10 (2k points)">Mee6 Lvl 10 (2k points)</option>
+                <option value="Mee6 Lvl 15 (3k points)">Mee6 Lvl 15 (3k points)</option>
+                <option value="Mee6 Lvl 20 (4k points)">Mee6 Lvl 20 (4k points)</option>
+                <option value="1st in Accessories Leaderboard (5k points)">1st in Accessories Leaderboard (5k points)</option>
+                <option value="2nd in Accessories Leaderboard (3k points)">2nd in Accessories Leaderboard (3k points)</option>
+                <option value="3rd in Accessories Leaderboard (1k points)">3rd in Accessories Leaderboard (1k points)</option>
+                <option value="Completing the Feedback Survey (2.5k)">Completing the feedback survey (2.5k)</option>
+                <option value="Bought in another player (1k)">Bought in another player (1k)</option>
+                <option value="Shop Refund">Shop refund</option>
+                <option value="Misc">Misc</option>
+            </select>
+
+            <input type="text" id="miscReasonInput" placeholder="Specify Misc Reason" style="display:none;">
+
+            <div class="button-group">
+                <button id="addToListBtn">Save to Log</button>
+                <button id="downloadLogBtn">Download Log (.txt)</button>
+                <button id="clearLogLocalBtn" class="info-button">Clear Local Display</button>
+                <button id="clearLogBtn" class="danger-button">Clear ALL Entries (Server & Local)</button>
+            </div>
+
+            <div class="points-reference">
+                <div class="reference-section standard-awards">
+                    <h3>⭐ Standard Point Awards Reference</h3>
+                    <ul class="points-list">
+                        <!-- NEW REASON REFERENCE ADDED -->
+                        <li>This months Legend: <strong>5,000 pts</strong></li> 
+
+                        <li>Discord Boost: <strong>1,000 pts</strong></li>
+                        <li>Server/Mod Developer Donation: <strong>1,000 pts</strong></li>
+                        <li>Mee6 Lvl 10: <strong>2,000 pts</strong></li>
+                        <li>Mee6 Lvl 15: <strong>3,000 pts</strong></li>
+                        <li>Mee6 Lvl 20: <strong>4,000 pts</strong></li>
+                        <li>Accessories 1st Place: <strong>5,000 pts</strong></li>
+                        <li>Accessories 2nd Place: <strong>3,000 pts</strong></li>
+                        <li>Accessories 3rd Place: <strong>1,000 pts</strong></li>
+                        <li>Feedback Survey: <strong>2,500 pts</strong></li>
+                        <li>Bought in New Player: <strong>1,000 pts</strong></li>
+                        <li>Shop Refund: *Variable*</li>
+                    </ul>
+                </div>
+
+                <div class="reference-section color-key">
+                    <h3>🎨 Log Color Key</h3>
+                    <ul>
+                        <li><span class="color-swatch swatch-added"></span> <strong>Green:</strong> Points **Added**</li>
+                        <li><span class="color-swatch swatch-deducted"></span> <strong>Red:</strong> Points **Deducted**</li>
+                        <li><span class="color-swatch swatch-adjusted"></span> <strong>Blue:</strong> **Balance Adjusted**</li>
+                        <li><span class="color-swatch swatch-other"></span> <strong>Pink:</strong> **Other Action**</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-container">
+            <h2>📜 Points History</h2> 
+            <input type="text" id="searchBar" placeholder="🔍 Search Player, Action, or Reason...">
+            <ul id="entryList">
+            </ul>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Alerts/Confirms -->
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle">Alert</h3>
+            <p id="modalMessage"></p>
+            <input type="password" id="modalInput" class="modal-input" placeholder="Enter password" style="display:none;">
+            <div class="modal-buttons">
+                <button id="modalConfirmBtn" class="danger-button" style="display:none;">Confirm</button>
+                <button id="modalCloseBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ***************************************************************
+        // *** CONFIGURATION: Bot and Web Interface share this Data Bin ***
+        // ***************************************************************
+        const BIN_ID = "6920a528ae596e708f67f685";
+        const SECRET_KEY = "$2a$10$Y7RyMSyB.GU67ZJdEbqQuuwdj7UJhht8mdy.Ytjf1CJHThjMoj0SW";
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+        // --- PASSWORD SETTING (Matches the bot's password) ---
+        const CLEAR_PASSWORD = "legends";
+        // ***************************************************************
+
+        // --- DOM Elements ---
+        const nameIdInput = document.getElementById('nameId');
+        const actionSelect = document.getElementById('actionSelect');
+        const otherActionInput = document.getElementById('otherActionInput');
+        const amountInput = document.getElementById('amountInput');
+        const whatForInput = document.getElementById('whatFor');
+        const miscReasonInput = document.getElementById('miscReasonInput');
+        const entryList = document.getElementById('entryList');
+        const searchBar = document.getElementById('searchBar');
+        const downloadLogBtn = document.getElementById('downloadLogBtn');
+        const clearLogBtn = document.getElementById('clearLogBtn');
+        const clearLogLocalBtn = document.getElementById('clearLogLocalBtn');
+        const addToListBtn = document.getElementById('addToListBtn');
+
+        // --- Modal Elements ---
+        const modalOverlay = document.getElementById('customModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalInput = document.getElementById('modalInput');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        let logEntries = [];
+        const PLACEHOLDER_ENTRY = { text: "PLACEHOLDER", html: "", search: "ignore placeholder", timestamp: Date.now(), actionClass: "other" };
+
+
+        // --- MODAL UTILITY (REPLACES alert() and confirm()) ---
+        function showModal(title, message, isConfirm = false, requiresInput = false, inputType = 'password') {
+            return new Promise(resolve => {
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                modalInput.style.display = requiresInput ? 'block' : 'none';
+                modalInput.type = inputType;
+                modalInput.value = '';
+
+                modalConfirmBtn.style.display = isConfirm ? 'inline-block' : 'none';
+                modalCloseBtn.textContent = isConfirm ? 'Cancel' : 'OK';
+
+                modalOverlay.style.display = 'flex';
+
+                const closeHandler = () => {
+                    modalOverlay.style.display = 'none';
+                    modalConfirmBtn.removeEventListener('click', confirmHandler);
+                    modalCloseBtn.removeEventListener('click', closeHandler);
+                    resolve(requiresInput ? null : false);
+                };
+
+                const confirmHandler = () => {
+                    modalOverlay.style.display = 'none';
+                    modalConfirmBtn.removeEventListener('click', confirmHandler);
+                    modalCloseBtn.removeEventListener('click', closeHandler);
+                    resolve(requiresInput ? modalInput.value : true);
+                };
+
+                modalCloseBtn.addEventListener('click', closeHandler);
+                modalConfirmBtn.addEventListener('click', confirmHandler);
+            });
+        }
+        // --------------------------------------------------------------------------
+
+
+        // --- JSONBIN Functions ---
+        async function loadEntries() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: { 'X-Master-Key': SECRET_KEY, 'X-Bin-Meta': false }
+                });
+                if (!response.ok) { 
+                    const errorDetails = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}. Details: ${errorDetails}`);
+                }
+                const data = await response.json();
+                const records = data.record || data;
+
+                logEntries = Array.isArray(records) ? records.filter(entry => entry.text !== "PLACEHOLDER") : [];
+                renderEntries();
+                console.log("Log loaded from server successfully.");
+            } catch (error) {
+                console.error("Could not load log from server. Starting with an empty log.", error);
+                logEntries = [];
+                renderEntries();
+            }
+        }
+
+        async function saveEntries() {
+            let dataToSend = logEntries.length > 0 ? logEntries : [PLACEHOLDER_ENTRY];
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': SECRET_KEY },
+                    body: JSON.stringify(dataToSend)
+                });
+                if (!response.ok) { 
+                    const errorDetails = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}. Details: ${errorDetails}`);
+                }
+                console.log("Log saved to server successfully.");
+            } catch (error) {
+                console.error("Could not save log to server. Error details:", error);
+                showModal("🚨 Save Error", "Warning: Log could not be saved to the central server!");
+            }
+        }
+
+        async function clearLog() {
+            const passwordAttempt = await showModal(
+                "⚠️ WARNING", 
+                "This will permanently delete ALL log entries from the SERVER (bot & web). Enter the password to confirm:", 
+                true, 
+                true,
+                'password'
+            );
+
+            if (passwordAttempt !== CLEAR_PASSWORD) {
+                if (passwordAttempt !== null) showModal("Cancelled", "Invalid password. Log clear cancelled.");
+                return;
+            }
+
+            const dataToClear = [PLACEHOLDER_ENTRY];
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': SECRET_KEY },
+                    body: JSON.stringify(dataToClear)
+                });
+
+                if (!response.ok) {
+                    const errorDetails = await response.text();
+                    throw new Error(`Server PUT failed. Status: ${response.status}. Details: ${errorDetails}`);
+                }
+
+                logEntries = [];
+                renderEntries();
+                showModal("✅ Success", "Log has been successfully cleared from the server.");
+
+            } catch (error) {
+                console.error("Could not clear log on server. Error details:", error);
+                showModal("🚨 FATAL ERROR", "Log could not be cleared on the central server! Please check console.");
+            }
+        }
+
+        function clearLogLocal() {
+            showModal("Clear Local Display", "Are you sure you want to clear the local display? The log data will REMAIN on the server and reload when the page is refreshed.", true)
+                .then(result => {
+                    if (result) {
+                        entryList.innerHTML = '';
+                        showModal("Local Clear", "Local display cleared. Data remains safe on the server.");
+                    }
+                });
+        }
+        
+        // --- UTILITY FUNCTIONS ---
+        function getActionClass(action) {
+            if (action.includes('Added')) return 'added';
+            if (action.includes('Deducted')) return 'deducted';
+            if (action.includes('Balance Adjusted')) return 'adjusted';
+            return 'other';
+        }
+
+        function renderEntries() {
+            entryList.innerHTML = '';
+            const displayEntries = logEntries.filter(entry => entry.text !== "PLACEHOLDER");
+
+            // Render in reverse order (newest first)
+            displayEntries.slice().reverse().forEach(entry => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = entry.html;
+                listItem.setAttribute('data-search-term', entry.search);
+                listItem.classList.add(entry.actionClass);
+                entryList.appendChild(listItem);
+            });
+        }
+
+        function getFormattedDateTime() {
+            const now = new Date();
+            const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const datePart = now.toLocaleDateString('en-GB', dateOptions);
+            const timePart = now.toLocaleTimeString('en-US', timeOptions);
+            return `${datePart} at ${timePart}`;
+        }
+
+        // --- Event listeners ---
+        whatForInput.addEventListener('change', function() {
+            miscReasonInput.style.display = (whatForInput.value === 'Misc') ? 'block' : 'none';
+            if (whatForInput.value !== 'Misc') miscReasonInput.value = '';
+        });
+
+        actionSelect.addEventListener('change', function() {
+            otherActionInput.style.display = (actionSelect.value === 'Other Action') ? 'block' : 'none';
+            if (actionSelect.value !== 'Other Action') otherActionInput.value = '';
+        });
+
+        addToListBtn.addEventListener('click', async function() {
+            const nameId = nameIdInput.value.trim();
+            let whatDid = actionSelect.value;
+            const amount = amountInput.value.trim();
+            let whatFor = whatForInput.value;
+            const timestamp = getFormattedDateTime();
+
+            if (nameId === '' || whatDid === '' || whatDid === '--- Select Action Type ---') {
+                showModal('Validation Error', 'Please fill in the Player name and select an Action Type!');
+                return;
+            }
+            if (whatDid === 'Other Action') {
+                const otherAction = otherActionInput.value.trim();
+                if (otherAction === '') {
+                    showModal('Validation Error', 'You selected "Other Action." Please specify the action.'); return;
+                }
+                whatDid = `Other Action: ${otherAction}`;
+            }
+            if (amount === '') {
+                showModal('Validation Error', 'Please enter an Amount for the transfer!'); return;
+            }
+            if (whatFor === '' || whatFor === '--- Select Reason for Points ---') {
+                showModal('Validation Error', 'Please select a valid Reason for the points transfer!'); return;
+            }
+            if (whatFor === 'Misc') {
+                const miscReason = miscReasonInput.value.trim();
+                if (miscReason === '') {
+                    showModal('Validation Error', 'You selected "Misc Reason." Please specify the reason.'); return;
+                }
+                whatFor = `Misc: ${miscReason}`;
+            }
+
+            const actionClass = getActionClass(actionSelect.value);
+
+            // HTML FORMAT FOR DISPLAY
+            const entryHtml = `
+                <div class="log-content">
+                    <span class="log-segment log-segment-name"><strong>Player:</strong> ${nameId}</span>
+                    <span class="log-segment"><strong>Action:</strong> ${whatDid}</span>
+                    <span class="log-segment log-segment-amount"><strong>Amount:</strong> ${amount}</span>
+                    <span class="log-segment log-segment-reason"><strong>Reason:</strong> ${whatFor}</span>
+                </div>
+                <span class="log-timestamp">Logged: ${timestamp}</span>
+            `;
+
+            const newEntry = {
+                text: `[${timestamp}] PLAYER: ${nameId} | ACTION: ${whatDid} | AMOUNT: ${amount} | REASON: ${whatFor}`,
+                html: entryHtml,
+                search: `${nameId.toLowerCase()} ${whatDid.toLowerCase()} ${amount.toLowerCase()} ${whatFor.toLowerCase()}`,
+                timestamp: Date.now(),
+                actionClass: actionClass
+            };
+
+            logEntries.push(newEntry);
+            renderEntries();
+            await saveEntries();
+
+            // Clear form inputs
+            nameIdInput.value = '';
+            actionSelect.selectedIndex = 0;
+            otherActionInput.style.display = 'none';
+            amountInput.value = '';
+            whatForInput.selectedIndex = 0;
+            miscReasonInput.style.display = 'none';
+            
+            showModal('Entry Saved', `Log entry saved for: ${nameId} (${whatDid} ${amount})`);
+        });
+
+        searchBar.addEventListener('keyup', function() {
+            const searchTerm = searchBar.value.toLowerCase().trim();
+            const listItems = entryList.getElementsByTagName('li');
+
+            Array.from(listItems).forEach(item => {
+                const searchData = item.getAttribute('data-search-term');
+                if (searchData && searchData.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        downloadLogBtn.addEventListener('click', function() {
+            if (logEntries.length === 0) {
+                showModal("Download Error", "The log is empty!");
+                return;
+            }
+
+            const logText = logEntries
+                .filter(entry => entry.text !== "PLACEHOLDER")
+                .map(entry => entry.text)
+                .join('\n');
+
+            const filename = `ArkLegendsPVE_PointsLog_${new Date().toISOString().slice(0, 10)}.txt`;
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showModal("Download Started", "Log download started!");
+        });
+
+        clearLogBtn.addEventListener('click', clearLog);
+        clearLogLocalBtn.addEventListener('click', clearLogLocal);
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', loadEntries);
+    </script>
+</body>
+</html>
